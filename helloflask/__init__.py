@@ -1,13 +1,41 @@
-from flask import Flask, g, session
+from flask import Flask, g, session, render_template
 from flask import request, Response, make_response
 from datetime import date, datetime, timedelta
 
 app = Flask(__name__)
 app.debug = True  # 디버깅모드
+# app.jinja_env.trim_blocks = True
 
 # 127.0.0.1/index  -> URL
 # /index -> URI
 
+@app.route("/main")
+def main():
+    return render_template("main.html", title="MAIN!!!")
+
+class Nav:
+    def __init__(self, title, url='#', children=[]):
+        self.title = title
+        self.url = url
+        self.children= children
+
+@app.route("/tmpl3")
+def tmpl3():
+    py = Nav("파이썬", "https://search.naver.")
+    java = Nav("자바", "https://search.naver.")
+    prg= Nav("프로그래밍 언어", "https://search.naver.", [py, java])
+    jinja= Nav("Jinja", "https://search.naver.")
+    flask = Nav("플라스크", "https://search.naver.", [jinja, prg])
+    spr = Nav("스프링", "https://search.naver.")
+    ndjs = Nav("노드JS", "https://search.naver.")
+    webf = Nav("웹 프레임워크", "https://search.naver.", [flask, spr, ndjs])
+
+    return render_template("index.html", navs=[prg, flask, webf])
+
+
+@app.route("/tmpl")
+def tmpl():
+    return render_template('index.html', title="Title")
 # COOKIE
 # 고객의 브라우저에 심어놓는 정보
 @app.route('/wc')
